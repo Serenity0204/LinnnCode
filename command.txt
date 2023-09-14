@@ -1,0 +1,41 @@
+GIT:
+    git clone user@git-server:project_name.git -b branch_name --single-branch
+    example:
+    git clone https://github.com/Serenity0204/CPP_Template.git -b example --single-branch
+    git clone https://github.com/Serenity0204/Graphing_Calculator_SFML.git -b test --single-branch
+    cd into working dir
+    git push -d https://github.com/stephengineer-CS008-classroom/10_15_avl_tree-Serenity0204 results
+    git branch -d results
+
+Django:
+    pip install Django
+
+    django-admin startproject mysite
+
+    cd mysite
+
+    python -m venv env
+    cd env/Scripts
+    activate
+    cd ..
+    cd ..
+    
+    python manage.py startapp appname
+
+    pip freeze
+    pip freeze > requirements.txt
+    pip install -r requirements.txt
+
+    django command:
+    python manage.py makemigrations
+    python manage.py migrate
+    python manage.py runserver
+    python manage.py createsuperuser
+
+	
+
+
+
+
+
+
