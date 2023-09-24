@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<style>
+    .CodeMirror {
+        height: 600px;
+    }
+    .CodeMirror-scroll {
+        max-height: 600px;
+    }
+</style>
+<div class="text-center mb-4">
+    <h1 style="display: inline;">{{ problem.title }}</h1>
+</div>
+<div class="text-center mb-4">
+    <p style="display: inline;">{{ problem.description }}</p>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <textarea class="form-control" id="code_form" name="code_form"></textarea>
+    </div>
+</form>
+
+<script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("code_form"), {
+        lineNumbers: true,
+        mode: "text/x-c++src",
+        autoCloseBrackets: true,
+        undoDepth: 50,
+        extraKeys: {
+            "Ctrl-Z": "undo",
+            "Cmd-Z": "undo",
+            "Ctrl-Y": "redo",
+            "Cmd-Y": "redo",
+            "Tab": function(cm) {
+                if (cm.somethingSelected()) {
+                    cm.indentSelection("add");
+                } else {
+                    cm.execCommand("insertSoftTab");
+                }
+            },
+            "Shift-Tab": function(cm) {
+                cm.indentSelection("subtract");
+            }
+        },
+        indentUnit: 4,
+        tabSize: 4,
+        indentWithTabs: false
+    });
+</script>
+{% endblock %}

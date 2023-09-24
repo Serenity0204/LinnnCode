@@ -4,6 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib import messages
+from .models import Problem
+from django.core.paginator import Paginator
+from .forms import CodeForm
 
 
 def home_view(request):
@@ -67,3 +70,23 @@ def logout_view(request):
     logout(request)
     messages.success(request, "User Logged Out")
     return redirect("login")
+
+
+def problem_view(request):
+    request.session.set_expiry(900)
+    problems_list = Problem.objects.all().order_by("id")
+
+    paginator = Paginator(problems_list, 5)  # Show 5 problems per page.
+    page_number = request.GET.get("page")
+    problems = paginator.get_page(page_number)
+
+    context = {"problems": problems}
+    return render(request, "problem.html", context)
+
+
+@login_required(login_url="login")
+def problem_detail_view(request, problem_id):
+    request.session.set_expiry(900)
+    problem = Problem.objects.get(id=problem_id)
+    context = {"problem": problem}
+    return render(request, "problem_detail.html", context)
