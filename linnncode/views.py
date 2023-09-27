@@ -88,61 +88,13 @@ def problem_view(request):
 def problem_detail_view(request, problem_id):
     request.session.set_expiry(900)
     problem = Problem.objects.get(id=problem_id)
-    code = None
     if request.method == "POST":
         form = CodeForm(request.POST)
         if form.is_valid():
-            code = form.cleaned_data["code_form"]
-            ## run driver later
+            # code for CodeForm Name, and html textarea name
+            code = form.cleaned_data["code"]
     else:
-        pass
+        form = CodeForm()
 
-    print(str(code))
-    context = {"problem": problem}
+    context = {"problem": problem, "form": form}
     return render(request, "problem_detail.html", context)
-
-
-# request.session.set_expiry(900)
-#     context = {}
-#     exercise = Exercise.objects.get(id=exercise_id)
-#     answer = exercise.answer
-
-#     if request.method == "POST":
-#         form = CppForm(request.POST)
-#         if form.is_valid():
-#             cpp_code = form.cleaned_data["cpp"]
-#             correct_msg = ""
-#             correct = False
-#             try:
-#                 output, error = run_cpp(cpp_code)
-#                 if str(output).strip() == str(answer).strip():
-#                     correct_msg = f"The Answer Is Correct, Congrats!"
-#                     correct = True
-#                 else:
-#                     if error:
-#                         correct_msg = "Compilation Error"
-#                     else:
-#                         correct_msg = f"The Answer Is Not Correct.\nExpected:\n{answer}\nBut Found:\n{output}"
-#                 context = {
-#                     "form": form,
-#                     "error": error,
-#                     "correct_msg": correct_msg,
-#                     "correct": correct,
-#                     "exercise": exercise,
-#                 }
-#             except Exception as e:
-#                 correct_msg = str(e)
-#                 context = {
-#                     "form": form,
-#                     "error": str(e),
-#                     "correct_msg": correct_msg,
-#                     "correct": correct,
-#                     "exercise": exercise,
-#                 }
-#     else:
-#         form = CppForm(initial={"cpp": exercise.prewritten_code})
-#         context = {
-#             "form": form,
-#             "exercise": exercise,
-#         }
-#     return render(request, "exercise_detail.html", context)

@@ -19,7 +19,7 @@
 <form method="post">
     {% csrf_token %}
     <div class="form-group">
-        <textarea class="form-control" id="code_form" name="code_form">{{ form.code.value|default_if_none:'' }}</textarea>
+        <textarea class="form-control" id="code_form" name="code">{{ form.code.value|default_if_none:'' }}</textarea>
     </div>
     <div class="text-center mb-4">
         <button type="submit" class="btn btn-primary">Run</button>
