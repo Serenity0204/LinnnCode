@@ -7,6 +7,8 @@ from django.contrib import messages
 from .models import Problem
 from django.core.paginator import Paginator
 from .forms import CodeForm
+from .utils import run_cpp
+import pprint
 
 
 def home_view(request):
@@ -93,6 +95,9 @@ def problem_detail_view(request, problem_id):
         if form.is_valid():
             # code for CodeForm Name, and html textarea name
             code = form.cleaned_data["code"]
+            res, err = run_cpp(code)
+            print(res)
+
     else:
         form = CodeForm()
 

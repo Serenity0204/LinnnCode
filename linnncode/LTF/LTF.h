@@ -1,7 +1,3 @@
-#ifndef LTF_H
-#define LTF_H
-
-#pragma once
 #include <algorithm>
 #include <cassert>
 #include <chrono>
@@ -16,6 +12,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+using namespace std;
 
 namespace LTF
 {
@@ -751,5 +748,3 @@ namespace LTF
 // fatal
 #define LTF_FATAL(message) LTF::Singleton<LTF::Logger>::instance().log(LTF::Logger::Level::FATAL, message, LTF::Logger::Info(__FILE__, __LINE__));
 };
-
-#endif // LTF_H
