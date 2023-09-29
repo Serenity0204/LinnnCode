@@ -88,5 +88,13 @@ def problem_view(request):
 def problem_detail_view(request, problem_id):
     request.session.set_expiry(900)
     problem = Problem.objects.get(id=problem_id)
-    context = {"problem": problem}
+    if request.method == "POST":
+        form = CodeForm(request.POST)
+        if form.is_valid():
+            # code for CodeForm Name, and html textarea name
+            code = form.cleaned_data["code"]
+    else:
+        form = CodeForm()
+
+    context = {"problem": problem, "form": form}
     return render(request, "problem_detail.html", context)
