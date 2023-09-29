@@ -153,6 +153,7 @@ def run_cpp(code):
                     capture_output=True,
                     text=True,
                     timeout=EXECUTION_TIMEOUT,
+                    check=True,
                 )
 
                 # Return the output and error (if any)
@@ -165,6 +166,15 @@ def run_cpp(code):
                     subprocess.Popen.terminate(result)
                 return None, "Execution Timeout"
 
+            except subprocess.CalledProcessError as e:
+                if result is not None:
+                    subprocess.Popen.terminate(result)
+                return None, "CalledProcessError"
+            except Exception as e:
+                # Handle other exceptions that may occur during subprocess execution
+                if result is not None:
+                    subprocess.Popen.terminate(result)
+                return None, f"An error occurred: {e}"
         else:
             # Execution if compilation fails
             error_message = compile_result.stderr
