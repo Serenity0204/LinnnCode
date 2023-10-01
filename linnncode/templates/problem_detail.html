@@ -16,6 +16,18 @@
     <p style="display: inline;">{{ problem.description }}</p>
 </div>
 
+<div class="text-center mb-4">
+    {% if messages %}
+        {% for message in messages %}
+            {% if error %}
+                <div class="alert alert-danger">{{ message }}</div>
+            {% else %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</div>
+
 <form method="post">
     {% csrf_token %}
     <div class="form-group">
@@ -26,6 +38,10 @@
         <a href = "{% url 'problem_detail' problem.id %}" class="btn btn-primary">Refresh</a>
     </div>
 </form>
+
+{% if batch %}
+    <pre style="display: inline;">{{ batch }}</pre>
+{% endif %}
 
 <script>
     var editor = CodeMirror.fromTextArea(document.getElementById("code_form"), {
