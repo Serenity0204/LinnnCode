@@ -7,8 +7,9 @@ from django.contrib import messages
 from .models import Problem
 from django.core.paginator import Paginator
 from .forms import CodeForm
-from .utils import run_cpp
-import pprint
+from .driver import TestBuilder, TestDriver
+from .constants import CPP_MAIN
+import os
 
 
 def home_view(request):
@@ -90,16 +91,44 @@ def problem_view(request):
 def problem_detail_view(request, problem_id):
     request.session.set_expiry(900)
     problem = Problem.objects.get(id=problem_id)
+    output = None
+    err = None
+
     if request.method == "POST":
         form = CodeForm(request.POST)
         if form.is_valid():
             # code for CodeForm Name, and html textarea name
             code = form.cleaned_data["code"]
-            res, err = run_cpp(code)
-            print(res)
+            language = "cpp"  ## for now
 
+            test_builder = TestBuilder(language)
+            # get the registration
+            registration = problem.test_suite.test_registration
+
+            # get all the test cases
+            cases = problem.test_suite.test_cases.all()
+            cases_list = []
+            # extract the strings of test cases
+            for case in cases:
+                cases_list.append(case.test_case)
+
+            # pass in list of tests and main, and code, and registration
+            test_builder.setup_cpp(cases_list, CPP_MAIN, code, registration)
+
+            # build the file and put it into driver
+            test_exe = TestDriver(test_builder.build())
+            output, err = test_exe.execute_cpp()
+
+            # handling output
+            if err:
+                messages.error(request, err)
+                output = None
+            else:
+                messages.success(request, "GOOD")
+
+            # decide which one is correct which one is wrong
     else:
-        form = CodeForm()
+        form = CodeForm(initial={"code": problem.prewritten_code})
 
-    context = {"problem": problem, "form": form}
+    context = {"problem": problem, "form": form, "batch": output, "error": err}
     return render(request, "problem_detail.html", context)
