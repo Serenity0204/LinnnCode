@@ -1,5 +1,5 @@
-from typing import List
-from .utils import run_cpp
+from typing import List, Dict
+from .utils import run_cpp, match_cpp_output
 import os
 
 
@@ -50,6 +50,10 @@ class TestBuilder:
 
 # will take the TestBuilder's 1 single file and execute them
 class TestDriver:
+    @classmethod
+    def extract_cpp_output(cls, input_str):
+        return match_cpp_output(input_str)
+
     def __init__(self, exe) -> None:
         self._exe = exe
 

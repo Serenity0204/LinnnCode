@@ -4,20 +4,13 @@ import os
 import shutil
 from functools import lru_cache
 from subprocess import TimeoutExpired
-
-
-# Maximum size of the cache (adjust as needed)
-MAX_CACHE_SIZE = 100
-
-# Timeout for the subprocess execution (in seconds)
-EXECUTION_TIMEOUT = 5
+from typing import Dict
+import re
+from .constants import MAX_CACHE_SIZE, EXECUTION_TIMEOUT
 
 
 @lru_cache(maxsize=MAX_CACHE_SIZE)
 def run_cpp(code):
-    # Access the global variable
-    global ltf_content
-
     # Create a temporary directory
     temp_dir = tempfile.mkdtemp()
 
@@ -78,3 +71,15 @@ def run_cpp(code):
     finally:
         # Remove the temporary directory and its contents
         shutil.rmtree(temp_dir)
+
+
+@lru_cache(maxsize=MAX_CACHE_SIZE)
+def match_cpp_output(input_str: str) -> Dict:
+    # matching file output
+    pattern = r"TEST NAME:(\S+) ----> \[([A-Z]+)\]"
+    matches = re.findall(pattern, input_str)
+    results = {}
+    for match in matches:
+        test_name, status = match
+        results[test_name] = status
+    return results

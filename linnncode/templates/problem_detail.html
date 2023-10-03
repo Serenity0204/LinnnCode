@@ -8,6 +8,13 @@
     .CodeMirror-scroll {
         max-height: 600px;
     }
+    #loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
 </style>
 <div class="text-center mb-4">
     <h1 style="display: inline;">{{ problem.title }}</h1>
@@ -21,9 +28,16 @@
         {% for message in messages %}
             {% if error %}
                 <div class="alert alert-danger">{{ message }}</div>
-            {% else %}
-                <div class="alert alert-success">{{ message }}</div>
             {% endif %}
+        {% endfor %}
+    {% endif %}
+</div>
+<div id="results" class="text-center mb-4">
+    {% if results %}
+        {% for key, value in results.items %}
+            <div class="alert {% if value == 'SUCCESS' %}alert-success{% else %}alert-danger{% endif %}">
+                <h1 >{{ key }} ---&gt; {{ value|upper }}</h1> 
+            </div>
         {% endfor %}
     {% endif %}
 </div>
@@ -34,14 +48,32 @@
         <textarea class="form-control" id="code_form" name="code">{{ form.code.value|default_if_none:'' }}</textarea>
     </div>
     <div class="text-center mb-4">
-        <button type="submit" class="btn btn-primary">Run</button>
-        <a href = "{% url 'problem_detail' problem.id %}" class="btn btn-primary">Refresh</a>
+        <button type="submit" id="run-button" class="btn btn-primary" onclick="startLoading()">Run</button>
+        <a href="{% url 'problem_detail' problem.id %}" class="btn btn-primary">Refresh</a>
+    </div>
+    <div id="loading" class="text-center mb-4" style="display: none;">
+        <div>
+            <span class="spinner-border spinner-border-sm " role="status" aria-hidden="true"></span>
+        </div>
+        <div class="text-center mb-4">Loading...</div>
     </div>
 </form>
 
-{% if batch %}
-    <pre style="display: inline;">{{ batch }}</pre>
-{% endif %}
+<script>
+    function startLoading() {
+        // Hide the button and show loading spinner
+        document.getElementById('run-button').style.display = 'none';
+        document.getElementById('loading').style.display = 'flex';
+
+        // Simulate loading for 3 seconds (replace this with your actual loading logic)
+        setTimeout(function() {
+            // Enable the button and hide loading spinner
+            document.getElementById('run-button').style.display = 'inline';
+            document.getElementById('loading').style.display = 'none';
+            
+        }, 3000);
+    }
+</script>
 
 <script>
     var editor = CodeMirror.fromTextArea(document.getElementById("code_form"), {

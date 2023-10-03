@@ -93,6 +93,7 @@ def problem_detail_view(request, problem_id):
     problem = Problem.objects.get(id=problem_id)
     output = None
     err = None
+    results = None
 
     if request.method == "POST":
         form = CodeForm(request.POST)
@@ -123,12 +124,16 @@ def problem_detail_view(request, problem_id):
             if err:
                 messages.error(request, err)
                 output = None
-            else:
-                messages.success(request, "GOOD")
 
             # decide which one is correct which one is wrong
+            results = TestDriver.extract_cpp_output(output)
     else:
         form = CodeForm(initial={"code": problem.prewritten_code})
 
-    context = {"problem": problem, "form": form, "batch": output, "error": err}
+    context = {
+        "problem": problem,
+        "form": form,
+        "error": err,
+        "results": results,
+    }
     return render(request, "problem_detail.html", context)
