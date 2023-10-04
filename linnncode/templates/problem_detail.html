@@ -15,6 +15,15 @@
         justify-content: center;
         height: 100%;
     }
+    #results {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+    }
+
+    #toggle-results-button {
+        margin-bottom: 10px; /* Add some spacing */
+    }
 </style>
 <div class="text-center mb-4">
     <h1 style="display: inline;">{{ problem.title }}</h1>
@@ -32,6 +41,13 @@
         {% endfor %}
     {% endif %}
 </div>
+
+{% if results %}
+    <div class="text-center">
+        <button id="toggle-results-button" class="btn btn-secondary">Show Results</button>
+    </div>
+{% endif %}
+
 <div id="results" class="text-center mb-4">
     {% if results %}
         {% for key, value in results.items %}
@@ -73,6 +89,18 @@
             
         }, 3000);
     }
+</script>
+
+<script>
+    // Toggle the results section visibility
+    document.getElementById('toggle-results-button').addEventListener('click', function () {
+        var resultsSection = document.getElementById('results');
+        if (resultsSection.style.maxHeight) {
+            resultsSection.style.maxHeight = null;
+        } else {
+            resultsSection.style.maxHeight = resultsSection.scrollHeight + 'px';
+        }
+    });
 </script>
 
 <script>

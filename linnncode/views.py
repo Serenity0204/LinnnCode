@@ -103,18 +103,20 @@ def problem_detail_view(request, problem_id):
             language = "cpp"  ## for now
 
             test_builder = TestBuilder(language)
-            # get the registration
-            registration = problem.test_suite.test_registration
+
 
             # get all the test cases
             cases = problem.test_suite.test_cases.all()
+            # get the registration
+            registration_count=  len(cases)
+            
             cases_list = []
             # extract the strings of test cases
             for case in cases:
                 cases_list.append(case.test_case)
 
             # pass in list of tests and main, and code, and registration
-            test_builder.setup_cpp(cases_list, CPP_MAIN, code, registration)
+            test_builder.setup_cpp(cases_list, CPP_MAIN, code, registration_count)
 
             # build the file and put it into driver
             test_exe = TestDriver(test_builder.build())
@@ -124,9 +126,9 @@ def problem_detail_view(request, problem_id):
             if err:
                 messages.error(request, err)
                 output = None
-
-            # decide which one is correct which one is wrong
-            results = TestDriver.extract_cpp_output(output)
+            else:
+                # decide which one is correct which one is wrong
+                results = TestDriver.extract_cpp_output(output)
     else:
         form = CodeForm(initial={"code": problem.prewritten_code})
 

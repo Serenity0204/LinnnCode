@@ -83,3 +83,15 @@ def match_cpp_output(input_str: str) -> Dict:
         test_name, status = match
         results[test_name] = status
     return results
+
+
+def build_registration(count:int)->str:
+
+    template = "LTF_TEST(MAIN, test<NUMBER>);"
+    number = "<NUMBER>"
+    def build(count:int) -> str:
+        registration = ""
+        for i in range(1, count + 1):
+            registration += template.replace(number, str(i)) + "\n"
+        return registration
+    return build(count)

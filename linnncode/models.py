@@ -4,7 +4,6 @@ from django.db import models
 # will have list of test cases into text field
 class TestSuite(models.Model):
     title = models.CharField(max_length=50, null=True)
-    test_registration = models.TextField(null=True)
 
     def __str__(self):
         return f"TestSuite: {self.title}"
