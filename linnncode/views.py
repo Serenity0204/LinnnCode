@@ -4,12 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib import messages
-from .models import Problem
+from .models import Problem, Submission
 from django.core.paginator import Paginator
 from .forms import CodeForm
 from .driver import TestBuilder, TestDriver
 from .constants import CPP_MAIN
-import os
 
 
 def home_view(request):
@@ -129,6 +128,11 @@ def problem_detail_view(request, problem_id):
             else:
                 # decide which one is correct which one is wrong
                 results = TestDriver.extract_cpp_output(output)
+            
+            ## either error or not, create submission to the problem
+            submission = Submission.objects.create(code=code, problem=problem, user=request.user)
+            # submission.users.add(request.user)
+            submission.save()
     else:
         form = CodeForm(initial={"code": problem.prewritten_code})
 
@@ -139,3 +143,8 @@ def problem_detail_view(request, problem_id):
         "results": results,
     }
     return render(request, "problem_detail.html", context)
+
+
+@login_required(login_url="login")
+def submission_view(request, id):
+    pass
