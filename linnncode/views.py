@@ -99,40 +99,41 @@ def problem_detail_view(request, problem_id):
         if form.is_valid():
             # code for CodeForm Name, and html textarea name
             code = form.cleaned_data["code"]
-            language = "cpp"  ## for now
+            # get the language
+            language = request.POST.get('language', 'cpp')
+            print(language)
 
+            # build the test output based on laguage
             test_builder = TestBuilder(language)
 
 
-            # get all the test cases
-            cases = problem.test_suite.test_cases.all()
-            # get the registration
-            registration_count=  len(cases)
-            
-            cases_list = []
-            # extract the strings of test cases
-            for case in cases:
-                cases_list.append(case.test_case)
-
-            # pass in list of tests and main, and code, and registration
-            test_builder.setup_cpp(cases_list, CPP_MAIN, code, registration_count)
-
-            # build the file and put it into driver
-            test_exe = TestDriver(test_builder.build())
-            output, err = test_exe.execute_cpp()
-
-            # handling output
-            if err:
-                messages.error(request, err)
-                output = None
-            else:
-                # decide which one is correct which one is wrong
-                results = TestDriver.extract_cpp_output(output)
-            
-            ## either error or not, create submission to the problem
-            submission = Submission.objects.create(code=code, problem=problem, user=request.user)
-            # submission.users.add(request.user)
-            submission.save()
+            ## for C++ Only
+            if language == "cpp":
+                # get all the test cases
+                cases = problem.test_suite.test_cases.all()
+                # get the registration
+                registration_count=  len(cases)
+                cases_list = []
+                # extract the strings of test cases
+                for case in cases:
+                    cases_list.append(case.test_case)
+                # pass in list of tests and main, and code, and registration
+                test_builder.setup_cpp(cases_list, CPP_MAIN, code, registration_count)
+                # build the file and put it into driver
+                test_exe = TestDriver(test_builder.build())
+                output, err = test_exe.execute_cpp()
+                # handling output
+                if err:
+                    messages.error(request, err)
+                    output = None
+                else:
+                    # decide which one is correct which one is wrong
+                    results = TestDriver.extract_cpp_output(output)
+                ## either error or not, create submission to the problem
+                submission = Submission.objects.create(code=code, problem=problem, user=request.user)
+                submission.save()
+            if language == "python":
+                pass
     else:
         form = CodeForm(initial={"code": problem.prewritten_code})
 

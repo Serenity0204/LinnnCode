@@ -24,6 +24,7 @@
     #toggle-results-button {
         margin-bottom: 10px; /* Add some spacing */
     }
+    
 </style>
 <div class="text-center mb-4">
     <h1 style="display: inline;">{{ problem.title }}</h1>
@@ -31,6 +32,7 @@
 <div class="text-center mb-4">
     <p style="display: inline;">{{ problem.description }}</p>
 </div>
+
 
 <div class="text-center mb-4">
     {% if messages %}
@@ -58,8 +60,16 @@
     {% endif %}
 </div>
 
+<div class="text-center mb-4">
+    <select id="language-select" class="form-control">
+        <option value="cpp">C++</option>
+        <option value="python">Python</option>
+    </select>
+</div>
+
 <form method="post">
     {% csrf_token %}
+    <input type="hidden" id="selected-language" name="language" value="cpp">
     <div class="form-group">
         <textarea class="form-control" id="code_form" name="code">{{ form.code.value|default_if_none:'' }}</textarea>
     </div>
@@ -81,12 +91,18 @@
         document.getElementById('run-button').style.display = 'none';
         document.getElementById('loading').style.display = 'flex';
 
-        // Simulate loading for 3 seconds (replace this with your actual loading logic)
+        // Get the selected language
+        var selectedLanguage = document.getElementById('language-select').value;
+
+        // Update the hidden input field with the selected language
+        document.getElementById('selected-language').value = selectedLanguage;
+
+        // timeout
         setTimeout(function() {
             // Enable the button and hide loading spinner
             document.getElementById('run-button').style.display = 'inline';
             document.getElementById('loading').style.display = 'none';
-            
+            document.getElementById('code-form').submit();
         }, 3000);
     }
 </script>
