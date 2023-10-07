@@ -10,4 +10,9 @@ urlpatterns = [
     path(
         "problems/<int:problem_id>/", views.problem_detail_view, name="problem_detail"
     ),
+    path(
+        "problems/<int:problem_id>/submissions",
+        views.submission_view,
+        name="submissions",
+    ),
 ]

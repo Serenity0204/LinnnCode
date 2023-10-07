@@ -93,6 +93,7 @@ def problem_detail_view(request, problem_id):
     output = None
     err = None
     results = None
+    flag = False
 
     if request.method == "POST":
         form = CodeForm(request.POST)
@@ -100,19 +101,17 @@ def problem_detail_view(request, problem_id):
             # code for CodeForm Name, and html textarea name
             code = form.cleaned_data["code"]
             # get the language
-            language = request.POST.get('language', 'cpp')
-            print(language)
+            language = request.POST.get("language", "cpp")
 
             # build the test output based on laguage
             test_builder = TestBuilder(language)
-
 
             ## for C++ Only
             if language == "cpp":
                 # get all the test cases
                 cases = problem.test_suite.test_cases.all()
                 # get the registration
-                registration_count=  len(cases)
+                registration_count = len(cases)
                 cases_list = []
                 # extract the strings of test cases
                 for case in cases:
@@ -122,6 +121,7 @@ def problem_detail_view(request, problem_id):
                 # build the file and put it into driver
                 test_exe = TestDriver(test_builder.build())
                 output, err = test_exe.execute_cpp()
+
                 # handling output
                 if err:
                     messages.error(request, err)
@@ -129,8 +129,14 @@ def problem_detail_view(request, problem_id):
                 else:
                     # decide which one is correct which one is wrong
                     results = TestDriver.extract_cpp_output(output)
+                    # no fail, then success
+                    if "FAIL" not in results.values():
+                        flag = True
+
                 ## either error or not, create submission to the problem
-                submission = Submission.objects.create(code=code, problem=problem, user=request.user)
+                submission = Submission.objects.create(
+                    code=code, problem=problem, user=request.user, success=flag
+                )
                 submission.save()
             if language == "python":
                 pass
@@ -147,5 +153,13 @@ def problem_detail_view(request, problem_id):
 
 
 @login_required(login_url="login")
-def submission_view(request, id):
-    pass
+def submission_view(request, problem_id):
+    request.session.set_expiry(900)
+    problem = Problem.objects.get(id=problem_id)
+
+    submissions_list = problem.submissions.all().order_by("-date")
+    paginator = Paginator(submissions_list, 11)
+    page_number = request.GET.get("page")
+    submissions = paginator.get_page(page_number)
+    context = {"submissions": submissions, "title": problem.title, "problem": problem}
+    return render(request, "submissions.html", context)

@@ -29,10 +29,15 @@
 <div class="text-center mb-4">
     <h1 style="display: inline;">{{ problem.title }}</h1>
 </div>
-<div class="text-center mb-4">
-    <p style="display: inline;">{{ problem.description }}</p>
+   
 </div>
-
+<div class="d-flex justify-content-center mt-4">
+    <div class="card bg-dark text-white">
+        <div class="card-body">
+            <p style="display: inline;">{{ problem.description }}</p>
+        </div>
+    </div>
+</div>
 
 <div class="text-center mb-4">
     {% if messages %}
@@ -63,7 +68,6 @@
 <div class="text-center mb-4">
     <select id="language-select" class="form-control">
         <option value="cpp">C++</option>
-        <option value="python">Python</option>
     </select>
 </div>
 
@@ -76,7 +80,9 @@
     <div class="text-center mb-4">
         <button type="submit" id="run-button" class="btn btn-primary" onclick="startLoading()">Run</button>
         <a href="{% url 'problem_detail' problem.id %}" class="btn btn-primary">Refresh</a>
+        <a href="{% url 'submissions' problem.id %}" class="btn btn-primary">Submissions</a>
     </div>
+
     <div id="loading" class="text-center mb-4" style="display: none;">
         <div>
             <span class="spinner-border spinner-border-sm " role="status" aria-hidden="true"></span>
