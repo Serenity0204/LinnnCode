@@ -163,3 +163,18 @@ def submission_view(request, problem_id):
     submissions = paginator.get_page(page_number)
     context = {"submissions": submissions, "title": problem.title, "problem": problem}
     return render(request, "submissions.html", context)
+
+
+def problem_search_view(request):
+    request.session.set_expiry(900)  # Reset session expiry to 15 minutes (900 seconds)
+    query = request.GET.get("query")
+    if not query:
+        return redirect("problems")
+
+    problem_list = Problem.objects.filter(title__startswith=query).order_by("id")
+    paginator = Paginator(problem_list, 5)  # Show 5 problems per page.
+    page_number = request.GET.get("page")
+    problems = paginator.get_page(page_number)
+
+    context = {"problems": problems}
+    return render(request, "problem.html", context)

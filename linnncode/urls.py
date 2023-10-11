@@ -15,4 +15,5 @@ urlpatterns = [
         views.submission_view,
         name="submissions",
     ),
+    path("search-problem/", views.problem_search_view, name="problem_search"),
 ]
