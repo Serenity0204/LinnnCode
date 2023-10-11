@@ -72,7 +72,13 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
           <!-- Added ml-auto class -->
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'problems' %}">Problems</a>
+          </li>
           {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'my_submissions' %}">My Submissions</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'logout' %}">Logout</a>
           </li>
@@ -84,9 +90,6 @@
             <a class="nav-link" href="{% url 'register' %}">Register</a>
           </li>
           {% endif %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'problems' %}">Problems</a>
-          </li>
           <form class="d-flex" action="{% url 'problem_search' %}" method="GET">
             <input class="form-control me-3" type="search" name="query" placeholder="Search Problems" aria-label="Search">
             <button class="btn btn-outline-success" type="submit">Search</button>

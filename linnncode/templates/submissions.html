@@ -11,14 +11,20 @@
 </style>
 
 <div class="text-center">
-    <h1 style="margin-bottom: 20px;">Submissions to <a href="{% url 'problem_detail' problem.id %}" >{{ title }}</a> </h1>
+    {% if problem %}
+        <h1 style="margin-bottom: 20px;">Submissions to <a href="{% url 'problem_detail' problem.id %}" >{{ title }}</a> </h1>
+    {% else %}
+        <h1 style="margin-bottom: 20px;">{{ title }}</a> </h1>
+    {% endif %}
 </div>
 {% if not submissions%}
     <h1 class="text-center">Empty</h1>
 {% endif %}
 {% for submission in submissions %}
     {% if submission.success %}
-        <div class="alert alert-success" data-toggle="modal" data-target="#successModal{{ submission.id }}">SUCCESS Submission by {{ submission.user }} at {{ submission.date }}</div>
+        <div class="alert alert-success" data-toggle="modal" data-target="#successModal{{ submission.id }}">
+            SUCCESS Submission by {{ submission.user }} at {{ submission.date }} to <a href="{% url 'problem_detail' submission.problem.id %}" >{{ submission.problem.title }}</a>
+        </div>
         <!-- Modal for success submission -->
         <div class="modal fade" id="successModal{{ submission.id }}" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
@@ -36,7 +42,9 @@
             </div>
         </div>
     {% else %}
-        <div class="alert alert-danger" data-toggle="modal" data-target="#failModal{{ submission.id }}">FAIL Submission by {{ submission.user }} at {{ submission.date }}</div>
+        <div class="alert alert-danger" data-toggle="modal" data-target="#failModal{{ submission.id }}">
+            FAIL Submission by {{ submission.user }} at {{ submission.date }} to <a href="{% url 'problem_detail' submission.problem.id %}" >{{ submission.problem.title }}</a>
+        </div>
         <!-- Modal for failed submission -->
         <div class="modal fade" id="failModal{{ submission.id }}" tabindex="-1" role="dialog" aria-labelledby="failModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">

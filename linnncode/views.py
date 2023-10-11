@@ -178,3 +178,14 @@ def problem_search_view(request):
 
     context = {"problems": problems}
     return render(request, "problem.html", context)
+
+
+@login_required(login_url="login")
+def my_submission_view(request):
+    request.session.set_expiry(900)
+    submissions_list = Submission.objects.filter(user=request.user).order_by("-date")
+    paginator = Paginator(submissions_list, 11)
+    page_number = request.GET.get("page")
+    submissions = paginator.get_page(page_number)
+    context = {"submissions": submissions, "title": f"All Submissions Submitted By {request.user}", "problem": None}
+    return render(request, "submissions.html", context)
