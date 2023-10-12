@@ -23,7 +23,7 @@
 {% for submission in submissions %}
     {% if submission.success %}
         <div class="alert alert-success" data-toggle="modal" data-target="#successModal{{ submission.id }}">
-            SUCCESS Submission by {{ submission.user }} at {{ submission.date }} to <a href="{% url 'problem_detail' submission.problem.id %}" >{{ submission.problem.title }}</a>
+            SUCCESS Submission by {{ submission.user }} at {{ submission.date }} to {{ submission.problem.title }}
         </div>
         <!-- Modal for success submission -->
         <div class="modal fade" id="successModal{{ submission.id }}" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
@@ -43,7 +43,7 @@
         </div>
     {% else %}
         <div class="alert alert-danger" data-toggle="modal" data-target="#failModal{{ submission.id }}">
-            FAIL Submission by {{ submission.user }} at {{ submission.date }} to <a href="{% url 'problem_detail' submission.problem.id %}" >{{ submission.problem.title }}</a>
+            FAIL Submission by {{ submission.user }} at {{ submission.date }} to {{ submission.problem.title }}
         </div>
         <!-- Modal for failed submission -->
         <div class="modal fade" id="failModal{{ submission.id }}" tabindex="-1" role="dialog" aria-labelledby="failModalLabel" aria-hidden="true">

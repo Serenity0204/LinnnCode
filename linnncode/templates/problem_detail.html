@@ -39,6 +39,9 @@
     </div>
 </div>
 
+{% if problem.img %}
+    <img src="{{ problem.img.url }}" alt="problem" class="img-fluid mx-auto d-block mt-4 mb-2" style="padding: 10px;" width="400" height="300">
+{% endif %}
 <div class="text-center">
     {% if messages %}
         {% for message in messages %}

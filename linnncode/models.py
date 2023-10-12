@@ -32,6 +32,7 @@ class Problem(models.Model):
     test_suite = models.OneToOneField(
         TestSuite, on_delete=models.CASCADE, related_name="problem", null=True
     )
+    img = models.ImageField(upload_to="images/", null=True, blank=True)
 
     def __str__(self):
         return self.title
