@@ -15,15 +15,34 @@
         justify-content: center;
         height: 100%;
     }
+    #results {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+    }
+
+    #toggle-results-button {
+        margin-bottom: 10px; /* Add some spacing */
+    }
+    
 </style>
 <div class="text-center mb-4">
     <h1 style="display: inline;">{{ problem.title }}</h1>
 </div>
-<div class="text-center mb-4">
-    <p style="display: inline;">{{ problem.description }}</p>
+   
+</div>
+<div class="d-flex justify-content-center mb-4 mt-4">
+    <div class="card bg-dark text-white">
+        <div class="card-body">
+            <p style="display: inline;">{{ problem.description }}</p>
+        </div>
+    </div>
 </div>
 
-<div class="text-center mb-4">
+{% if problem.img %}
+    <img src="{{ problem.img.url }}" alt="problem" class="img-fluid mx-auto d-block mt-4 mb-2" style="padding: 10px;" width="400" height="300">
+{% endif %}
+<div class="text-center">
     {% if messages %}
         {% for message in messages %}
             {% if error %}
@@ -32,6 +51,13 @@
         {% endfor %}
     {% endif %}
 </div>
+
+{% if results %}
+    <div class="text-center">
+        <button id="toggle-results-button" class="btn btn-secondary">Show Results</button>
+    </div>
+{% endif %}
+
 <div id="results" class="text-center mb-4">
     {% if results %}
         {% for key, value in results.items %}
@@ -42,15 +68,24 @@
     {% endif %}
 </div>
 
+<div class="text-center mb-4">
+    <select id="language-select" class="form-control">
+        <option value="cpp">C++</option>
+    </select>
+</div>
+
 <form method="post">
     {% csrf_token %}
+    <input type="hidden" id="selected-language" name="language" value="cpp">
     <div class="form-group">
         <textarea class="form-control" id="code_form" name="code">{{ form.code.value|default_if_none:'' }}</textarea>
     </div>
     <div class="text-center mb-4">
         <button type="submit" id="run-button" class="btn btn-primary" onclick="startLoading()">Run</button>
         <a href="{% url 'problem_detail' problem.id %}" class="btn btn-primary">Refresh</a>
+        <a href="{% url 'submissions' problem.id %}" class="btn btn-primary">Submissions</a>
     </div>
+
     <div id="loading" class="text-center mb-4" style="display: none;">
         <div>
             <span class="spinner-border spinner-border-sm " role="status" aria-hidden="true"></span>
@@ -65,14 +100,32 @@
         document.getElementById('run-button').style.display = 'none';
         document.getElementById('loading').style.display = 'flex';
 
-        // Simulate loading for 3 seconds (replace this with your actual loading logic)
+        // Get the selected language
+        var selectedLanguage = document.getElementById('language-select').value;
+
+        // Update the hidden input field with the selected language
+        document.getElementById('selected-language').value = selectedLanguage;
+
+        // timeout
         setTimeout(function() {
             // Enable the button and hide loading spinner
             document.getElementById('run-button').style.display = 'inline';
             document.getElementById('loading').style.display = 'none';
-            
+            document.getElementById('code-form').submit();
         }, 3000);
     }
+</script>
+
+<script>
+    // Toggle the results section visibility
+    document.getElementById('toggle-results-button').addEventListener('click', function () {
+        var resultsSection = document.getElementById('results');
+        if (resultsSection.style.maxHeight) {
+            resultsSection.style.maxHeight = null;
+        } else {
+            resultsSection.style.maxHeight = resultsSection.scrollHeight + 'px';
+        }
+    });
 </script>
 
 <script>

@@ -1,4 +1,87 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
+<style>
+  /* Custom CSS animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .fade-in {
+    animation: fadeIn 1.5s ease-in-out;
+  }
+
+  .fade-in-header {
+    animation: fadeIn 1.5s ease-in-out;
+    animation-delay: 0.5s; 
+  }
+
+  .fade-in-paragraph {
+    animation: fadeIn 1.5s ease-in-out;
+    animation-delay: 1s; 
+  }
+
+  /* Custom styles for the header */
+  .large-header {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    /* Optional, you can remove this if you want regular text color */
+    color: #333;
+  }
+
+  /* Custom styles for the slanted text */
+  .slanted-text {
+    display: inline-block;
+    transform: skewX(-15deg); /* Adjust the degree to control the slant */
+  }
+
+  /* Custom rainbow color animation with darker colors */
+  .rainbow-text {
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: rainbow 5s infinite;
+    /* Set background size to workaround Safari issue */
+    background-size: 200% auto;
+    /* Replace with your preferred darker colors or add more colors */
+    background-image: linear-gradient(to right, #6a0dad, #1b1464, #0044a5, #0a7026, #b9a500, #9e5f00, #ae0d16);
+    /* Add optional text shadow for better visibility */
+    color: transparent;
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
+  }
+
+  @keyframes rainbow {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+  .rounded-image {
+    border-radius: 10%; /* 50% makes the image circular, adjust as needed */
+    overflow: hidden; /* This ensures the image stays within the rounded borders */
+    max-width: 100%;
+  }
+  
+</style>
+
+<div class="jumbotron">
+    <h1 class="display-4 text-center fade-in-header large-header rainbow-text">LinnnCode</h1>
+    <p class="lead text-center fade-in-paragraph">
+        <span class="slanted-text">Practice Coding and Problem-Solving Online</span>
+    </p>
+    <hr class="my-4">
+    <p class="lead text-center fade-in-paragraph">
+        Master the Code, Shape Your Future, Come and Join Our Us and Level Up Your Skills By DOING MORE PROBLEMS!</p>
+</div>
+
+<div class="text-center">
+  <img src="{% static 'img/judge.jpg' %}" alt="Little Cloud Logo" class="img-fluid fade-in rounded-image" style="max-width: 375px;">
+</div>
 {% endblock %}

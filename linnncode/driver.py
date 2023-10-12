@@ -1,5 +1,5 @@
 from typing import List, Dict
-from .utils import run_cpp, match_cpp_output
+from .utils import run_cpp, match_cpp_output, build_registration
 import os
 
 
@@ -29,7 +29,9 @@ class TestBuilder:
     def language(self) -> str:
         return self._language
 
-    def setup_cpp(self, tests: List[str], main: str, code: str, registration: str):
+    def setup_cpp(
+        self, tests: List[str], main: str, code: str, registration_count: int
+    ):
         # LTF
         exe = TestBuilder.LTF + "\n"
         # code
@@ -38,7 +40,7 @@ class TestBuilder:
         for test in tests:
             exe += "\n" + test + "\n"
         # registrations
-        exe += registration + "\n"
+        exe += build_registration(registration_count) + "\n"
         # main
         exe += main + "\n"
         # assign
@@ -51,7 +53,7 @@ class TestBuilder:
 # will take the TestBuilder's 1 single file and execute them
 class TestDriver:
     @classmethod
-    def extract_cpp_output(cls, input_str):
+    def extract_cpp_output(cls, input_str) -> Dict:
         return match_cpp_output(input_str)
 
     def __init__(self, exe) -> None:

@@ -77,6 +77,9 @@
           </li>
           {% if user.is_authenticated %}
           <li class="nav-item">
+            <a class="nav-link" href="{% url 'my_submissions' %}">My Submissions</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="{% url 'logout' %}">Logout</a>
           </li>
           {% else %}
@@ -87,6 +90,10 @@
             <a class="nav-link" href="{% url 'register' %}">Register</a>
           </li>
           {% endif %}
+          <form class="d-flex" action="{% url 'problem_search' %}" method="GET">
+            <input class="form-control me-3" type="search" name="query" placeholder="Search Problems" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+          </form> 
         </ul>
       </div>
     </nav>

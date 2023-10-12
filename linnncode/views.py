@@ -4,12 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib import messages
-from .models import Problem
+from .models import Problem, Submission
 from django.core.paginator import Paginator
 from .forms import CodeForm
 from .driver import TestBuilder, TestDriver
 from .constants import CPP_MAIN
-import os
 
 
 def home_view(request):
@@ -94,39 +93,53 @@ def problem_detail_view(request, problem_id):
     output = None
     err = None
     results = None
+    flag = False
 
     if request.method == "POST":
         form = CodeForm(request.POST)
         if form.is_valid():
             # code for CodeForm Name, and html textarea name
             code = form.cleaned_data["code"]
-            language = "cpp"  ## for now
+            # get the language
+            language = request.POST.get("language", "cpp")
 
+            # build the test output based on laguage
             test_builder = TestBuilder(language)
-            # get the registration
-            registration = problem.test_suite.test_registration
 
-            # get all the test cases
-            cases = problem.test_suite.test_cases.all()
-            cases_list = []
-            # extract the strings of test cases
-            for case in cases:
-                cases_list.append(case.test_case)
+            ## for C++ Only
+            if language == "cpp":
+                # get all the test cases
+                cases = problem.test_suite.test_cases.all()
+                # get the registration
+                registration_count = len(cases)
+                cases_list = []
+                # extract the strings of test cases
+                for case in cases:
+                    cases_list.append(case.test_case)
+                # pass in list of tests and main, and code, and registration
+                test_builder.setup_cpp(cases_list, CPP_MAIN, code, registration_count)
+                # build the file and put it into driver
+                test_exe = TestDriver(test_builder.build())
+                output, err = test_exe.execute_cpp()
 
-            # pass in list of tests and main, and code, and registration
-            test_builder.setup_cpp(cases_list, CPP_MAIN, code, registration)
+                # handling output
+                if err:
+                    messages.error(request, err)
+                    output = None
+                else:
+                    # decide which one is correct which one is wrong
+                    results = TestDriver.extract_cpp_output(output)
+                    # no fail, then success
+                    if "FAIL" not in results.values():
+                        flag = True
 
-            # build the file and put it into driver
-            test_exe = TestDriver(test_builder.build())
-            output, err = test_exe.execute_cpp()
-
-            # handling output
-            if err:
-                messages.error(request, err)
-                output = None
-
-            # decide which one is correct which one is wrong
-            results = TestDriver.extract_cpp_output(output)
+                ## either error or not, create submission to the problem
+                submission = Submission.objects.create(
+                    code=code, problem=problem, user=request.user, success=flag
+                )
+                submission.save()
+            if language == "python":
+                pass
     else:
         form = CodeForm(initial={"code": problem.prewritten_code})
 
@@ -137,3 +150,42 @@ def problem_detail_view(request, problem_id):
         "results": results,
     }
     return render(request, "problem_detail.html", context)
+
+
+@login_required(login_url="login")
+def submission_view(request, problem_id):
+    request.session.set_expiry(900)
+    problem = Problem.objects.get(id=problem_id)
+
+    submissions_list = problem.submissions.all().order_by("-date")
+    paginator = Paginator(submissions_list, 11)
+    page_number = request.GET.get("page")
+    submissions = paginator.get_page(page_number)
+    context = {"submissions": submissions, "title": problem.title, "problem": problem}
+    return render(request, "submissions.html", context)
+
+
+def problem_search_view(request):
+    request.session.set_expiry(900)  # Reset session expiry to 15 minutes (900 seconds)
+    query = request.GET.get("query")
+    if not query:
+        return redirect("problems")
+
+    problem_list = Problem.objects.filter(title__startswith=query).order_by("id")
+    paginator = Paginator(problem_list, 5)  # Show 5 problems per page.
+    page_number = request.GET.get("page")
+    problems = paginator.get_page(page_number)
+
+    context = {"problems": problems}
+    return render(request, "problem.html", context)
+
+
+@login_required(login_url="login")
+def my_submission_view(request):
+    request.session.set_expiry(900)
+    submissions_list = Submission.objects.filter(user=request.user).order_by("-date")
+    paginator = Paginator(submissions_list, 11)
+    page_number = request.GET.get("page")
+    submissions = paginator.get_page(page_number)
+    context = {"submissions": submissions, "title": f"All Submissions Submitted By {request.user}", "problem": None}
+    return render(request, "submissions.html", context)

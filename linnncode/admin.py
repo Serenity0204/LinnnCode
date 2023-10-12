@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Problem, TestCase, TestSuite
+from .models import Problem, TestCase, TestSuite, Submission
 
 
 # Register your models here.
@@ -19,3 +19,4 @@ class TestSuiteAdmin(admin.ModelAdmin):
 
 admin.site.register(TestSuite, TestSuiteAdmin)
 admin.site.register(Problem)
+admin.site.register(Submission)
