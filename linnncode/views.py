@@ -8,7 +8,6 @@ from .models import Problem, Submission
 from django.core.paginator import Paginator
 from .forms import CodeForm
 from .driver import TestBuilder, TestDriver
-from .constants import CPP_MAIN
 
 
 def home_view(request):
@@ -117,7 +116,7 @@ def problem_detail_view(request, problem_id):
                 for case in cases:
                     cases_list.append(case.test_case)
                 # pass in list of tests and main, and code, and registration
-                test_builder.setup_cpp(cases_list, CPP_MAIN, code, registration_count)
+                test_builder.setup_cpp(cases_list, code, registration_count)
                 # build the file and put it into driver
                 test_exe = TestDriver(test_builder.build())
                 output, err = test_exe.execute_cpp()
@@ -187,5 +186,9 @@ def my_submission_view(request):
     paginator = Paginator(submissions_list, 11)
     page_number = request.GET.get("page")
     submissions = paginator.get_page(page_number)
-    context = {"submissions": submissions, "title": f"All Submissions Submitted By {request.user}", "problem": None}
+    context = {
+        "submissions": submissions,
+        "title": f"All Submissions Submitted By {request.user}",
+        "problem": None,
+    }
     return render(request, "submissions.html", context)

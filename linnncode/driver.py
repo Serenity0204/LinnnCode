@@ -1,6 +1,7 @@
 from typing import List, Dict
 from .utils import run_cpp, match_cpp_output, build_registration
 import os
+from .constants import CPP_MAIN, TREE_NODE_DEF
 
 
 # will get the base code and build the test cases with user's code into 1 single file
@@ -34,6 +35,8 @@ class TestBuilder:
     ):
         # LTF
         exe = TestBuilder.LTF + "\n"
+        # definitions
+        exe += TREE_NODE_DEF + "\n"
         # code
         exe += code + "\n"
         # Test case
@@ -42,7 +45,7 @@ class TestBuilder:
         # registrations
         exe += build_registration(registration_count) + "\n"
         # main
-        exe += main + "\n"
+        exe += CPP_MAIN + "\n"
         # assign
         self._exe = exe
 
