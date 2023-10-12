@@ -30,9 +30,7 @@ class TestBuilder:
     def language(self) -> str:
         return self._language
 
-    def setup_cpp(
-        self, tests: List[str], main: str, code: str, registration_count: int
-    ):
+    def setup_cpp(self, tests: List[str], code: str, registration_count: int):
         # LTF
         exe = TestBuilder.LTF + "\n"
         # definitions
