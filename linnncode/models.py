@@ -2,6 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+def get_default_image():
+    return ""
+
+
 # will have list of test cases into text field
 class TestSuite(models.Model):
     title = models.CharField(max_length=50, null=True)
