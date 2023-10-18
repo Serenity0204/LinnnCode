@@ -36,7 +36,7 @@ We aim to support multiple languages(add more drivers!) and add a to-do list fun
 ![submission-all.png](./demo/submission-all.png)
 * Viewing Submission Code
 ![view-code.png](./demo/view-code.png)
-
+* [Presentation Slides](https://github.com/Serenity0204/LinnnCode/blob/master/demo/LinnnCode.pdf)
 ## General Design Flow:
 https://docs.google.com/document/d/151UgRyzX1GIQnWgQZXjd5QYPJwO0W-ZCCpm5zK5xot8/edit?usp=sharing
 
